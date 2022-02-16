@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wordle Clone by lightflix</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/wordleui.css') }}">
+</head>
+    <body style="margin: 0">
+            <form autocomplete="off" action="/guess" method="POST">
+                <input class="guess-input" placeholder="{% if state == 6 and status == 0 and answer %} The word was '{{ answer }}' 👁👄👁 {% elif status == 1 %} You got it! 🥳{% else %} {{ 6 - state }} tries left{% endif %}"
+                        autocomplete="false" type="text" name="guess" minlength="5" maxlength="5" style="text-transform:lowercase" onkeydown="return /[a-z]/i.test(event.key)" required {% if state == 6 or status == 1 %} disabled {% endif %} autofocus><br>
+                <!-- <input type="submit" value="Submit"> -->
+            </form>
+
+   
+    <center>
+        {% if round_list %}
+            {% for guess in round_list %}
+                <p class="guess">
+                    {% for letter,reach in guess %}
+                        <span
+                            {% if reach == 0 %} class="absent guess-char" {% endif %} 
+                            {% if reach == 1 %} class="present guess-char" {% endif %} 
+                            {% if reach == 2 %} class="perfect guess-char" {% endif %}>
+                                {{letter}}
+                        </span>
+                    {% endfor %}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+        {% if state == 6 or status == 1 %}
+            <form action="/">
+                <input class="reset-button" type="submit" value="Start over" />
+            </form>
+        {% endif %}
+
+    </center>
+
+  </body>
+
+    <script>
+        if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+
+</html>
