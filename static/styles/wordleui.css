@@ -15,7 +15,7 @@
 
 .guess-char {
     font-family: 'Fira';
-    font-size: 35pt;
+    font-size: 25pt;
     color: rgb(39, 39, 39);
     text-align: center;
     margin-left: -2px;
@@ -37,7 +37,7 @@
     width:100%;
     position: fixed;
     text-align: center;
-    font-size: 24pt;
+    font-size: 15pt;
     font-family: Fira;
     /* display: inline-block; */
     margin: 0;
@@ -62,7 +62,7 @@
 }
 
 .face {
-    width: auto;
+    width: 200px;
     height: auto;
     margin-left: auto;
     margin-right: auto;
