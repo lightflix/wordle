@@ -9,43 +9,66 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/wordleui.css') }}">
 </head>
     <body style="margin: 0">
-            <form autocomplete="off" action="/guess" method="POST">
-                <input class="guess-input" placeholder="{% if state == 6 and status == 0 and answer %} The word was '{{ answer }}' 👁👄👁 {% elif status == 1 %} You got it! 🥳{% else %} {{ 6 - state }} tries left{% endif %}"
-                        autocomplete="false" type="text" name="guess" minlength="5" maxlength="5" style="text-transform:lowercase" onkeydown="return /[a-z]/i.test(event.key)" required {% if state == 6 or status == 1 %} disabled {% endif %} autofocus><br>
-                <!-- <input type="submit" value="Submit"> -->
-            </form>
-
+        <form autocomplete="off" action="/guess" method="POST">
+            <input class="guess-input" placeholder="{% if state == 6 and status == 0 and answer %} The word was '{{ answer }}' 👁👄👁 {% elif status == 1 %} You got it! 🥳{% else %} {{ 6 - state }} tries left {% endif %}"
+                    autocomplete="false" type="text" name="guess" minlength="5" maxlength="5" style="text-transform:lowercase" onkeydown="return /[a-z]/i.test(event.key)" required {% if state == 6 or status == 1 %} disabled {% endif %} autofocus><br>
+            <!-- <input type="submit" value="Submit"> -->
+        </form>
    
-    <center>
-        {% if round_list %}
-            {% for guess in round_list %}
-                <p class="guess">
-                    {% for letter,reach in guess %}
-                        <span
-                            {% if reach == 0 %} class="absent guess-char" {% endif %} 
-                            {% if reach == 1 %} class="present guess-char" {% endif %} 
-                            {% if reach == 2 %} class="perfect guess-char" {% endif %}>
-                                {{letter}}
-                        </span>
-                    {% endfor %}
-                </p>
-            {% endfor %}
-        {% endif %}
+        <center>
 
-        {% if state == 6 or status == 1 %}
-            <form action="/">
-                <input class="reset-button" type="submit" value="Start over" />
-            </form>
-        {% endif %}
+            {% if state == 0 %}
+                <img class="face" src="{{ url_for('static',filename='face0.png') }}" alt="I'm watching">
+            {% elif state == 1 %}
+                <img class="face" src="{{ url_for('static',filename='face0.png') }}" alt="I'm watching">
+            {% elif state == 2 %}
+                <img class="face" src="{{ url_for('static',filename='face1.png') }}" alt="I'm watching">
+            {% elif state == 3 %}
+                <img class="face" src="{{ url_for('static',filename='face2.png') }}" alt="I'm watching">
+            {% elif state == 4 %}
+                <img class="face" src="{{ url_for('static',filename='face3.png') }}" alt="I'm watching">
+            {% elif state == 5 %}
+                <img class="face" src="{{ url_for('static',filename='face4.png') }}" alt="I'm watching">
+            {% elif status == 1 %}
+                <img class="face" src="{{ url_for('static',filename='face0.png') }}" alt="I'm watching">
+            {% else %}
+                <img class="face" src="{{ url_for('static',filename='face5.png') }}" alt="I'm watching">
+            {% endif %}
 
-    </center>
+            {% if round_list %}
+                {% for guess in round_list %}
+                    <p class="guess">
+                        {% for letter,reach in guess %}
+                            <span
+                                {% if reach == 0 %} class="absent guess-char" {% endif %} 
+                                {% if reach == 1 %} class="present guess-char" {% endif %} 
+                                {% if reach == 2 %} class="perfect guess-char" {% endif %}>
+                                    {{letter}}
+                            </span>
+                        {% endfor %}
+                    </p>
+                {% endfor %}
+            {% endif %}
 
-  </body>
+            {% if state == 6 or status == 1 %}
+                <form action="/">
+                    <input class="reset-button" type="submit" value="Start over" />
+                </form>
+            {% endif %}
+
+            {% if invalid == 1%} 
+            <script>
+                alert("Think harder");
+            </script>
+            {% endif %}
+
+        </center>
+
+    </body>
 
     <script>
         if ( window.history.replaceState ) {
         window.history.replaceState( null, null, window.location.href );
         }
     </script>
-
 </html>

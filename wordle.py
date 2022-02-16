@@ -3,10 +3,12 @@
 from flask import Flask, request, render_template, session, redirect, url_for
 import re
 import random
+import uuid
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "m1lktrUckjUsT4rr1v"
-
+app.permanent_session_lifetime = datetime.timedelta(days=365)
 
 @app.errorhandler(405)
 def method_not_allowed(e):
@@ -60,35 +62,31 @@ def begin():
         gameover = session['gameover']
     except:
 
+        session['id'] = str(uuid.uuid4())[:10]
         session['state'] = 0
         session['guess_list'] = []
         session['guess_list_raw'] = []
         session['answer'] = random.choice(answer_list)
-        print("Word: "+session['answer'])
+        print("INFO: "+session['id']+" started new game, Word: "+session['answer'])
         session['gameover'] = False
-    
         return render_template("wordleui.html", state=session['state'], status=0)
 
     else:
         if not gameover:
-            print("Word: "+session['answer'])
+            print("INFO: "+session['id']+" tried to start over without finishing, Word: "+session['answer'])
             return render_template("wordleui.html", round_list=session['guess_list'], state=session['state'],status=0)
-
 
     session['state'] = 0
     session['guess_list'] = []
     session['guess_list_raw'] = []
     session['answer'] = random.choice(answer_list)
-    print("Word: "+session['answer'])
+    print("INFO: "+session['id']+" started new game, Word: "+session['answer']) 
     session['gameover'] = False
-
     return render_template("wordleui.html", state=session['state'], status=0)
 
 
 @app.route('/guess', methods=['POST'])
 def guess():
-
-    print("GAMEOVER? "+str(session['gameover']))
 
     if(session['state'] >= 0 and session['state'] <= 5 and not session['gameover']):
 
@@ -103,25 +101,24 @@ def guess():
 
         # print("Guess is "+guess)
 
-        print("Guess made: "+str(guess.encode("utf8","ignore")), "Answer: "+session['answer'])
+        print("INFO: "+session['id']+" made guess: "+str(guess.encode("utf8","ignore")), "Answer: "+session['answer'])
 
         
-
         if not (re.match("^[a-z]*$", guess) and checkValidity(guess) and guess not in session['guess_list_raw']):
             #if input is bad
 
             #INSERT BETTER CODE HERE. THIS CLEARS THE WHOLE STATE.
-            return render_template("wordleui.html", round_list=session['guess_list'], state=session['state'], status=0)
+            return render_template("wordleui.html", round_list=session['guess_list'], state=session['state'], status=0, invalid=1)
 
         else:
-            
             session['guess_list_raw'].append(guess)
             session['guess_list'].append(getMatchScores(guess, session['answer']))
             session['state'] += 1
+            
+            print("INFO: "+session['id']+", State: "+str(session['state'])+" Game over: "+str(session['gameover']))
 
             if guess == session['answer']:
                 session['gameover'] = True
-                # print("EQUAL PART REACHED")
 
                 return render_template("wordleui.html", round_list=session['guess_list'], status=1)
 
